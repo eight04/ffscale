@@ -37,6 +37,9 @@ ffscale --output output.mp4 --height 720 input.mp4
 # glob input, non-video files are skipped automatically
 ffscale --output output.mp4 --height 720 *
 
+# use percentage
+ffscale --output output.mp4 --height 50% input.mp4
+
 # use --short-side instead of --height
 ffscale --output output.mp4 --short-side 720 input.mp4
 
@@ -45,6 +48,9 @@ ffscale --output output.mp4 --height 1080 --direction up input.mp4
 
 # output to a different directory
 ffscale --output "{dir}720/{name}{ext}" --height 720 input.mp4
+
+# shorthand
+ffscale -s 720 *
 ```
 
 Full documentation:
