@@ -39,14 +39,8 @@ The CLI tries to maintain the aspect ratio if only one side is specified.
 
 const args = neodoc.run(docs);
 for (const pattern of args["<file>"]) {
-  for await (const file of fg.stream(pattern)) {
+  for await (const file of fg.stream(pattern, {onlyFiles: true})) {
     console.log(`Processing ${file}`);
-
-    const stat = await fs.stat(file);
-    if (stat.isDirectory()) {
-      console.log("Skipping directory.");
-      continue;
-    }
 
     const raw = await $`ffprobe ${file} -of json -show_streams -show_error`.catch(err => err);
     const data = JSON.parse(raw.stdout);
