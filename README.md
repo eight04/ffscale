@@ -1,6 +1,8 @@
 ffscale
 =======
 
+[![test](https://github.com/eight04/ffscale/actions/workflows/test.yml/badge.svg)](https://github.com/eight04/ffscale/actions/workflows/test.yml)
+
 A CLI wrapping ffmpeg to upscale/downscale videos.
 
 Goals
@@ -12,14 +14,14 @@ Goals
 Installation
 ------------
 
-### Install ffmpeg
+### ffmpeg
 
 This CLI depends on ffmpeg:
 https://ffmpeg.org/
 
 Make sure `ffmpeg` and `ffprobe` commands are available.
 
-### Install ffscale
+### ffscale
 
 ```
 npm install -g ffscale
