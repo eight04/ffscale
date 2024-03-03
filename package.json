@@ -1,0 +1,35 @@
+{
+  "name": "ffscale",
+  "version": "0.0.0",
+  "description": "A CLI wrapping ffmpeg to upscale/downscale videos. ",
+  "keywords": [
+    "cli",
+    "ffmpeg",
+    "scale",
+    "external"
+  ],
+  "main": "index.mjs",
+  "files": [],
+  "eslintIgnore": [
+    "coverage"
+  ],
+  "scripts": {
+    "test": "eslint . --cache",
+    "preversion": "npm test",
+    "postversion": "git push --follow-tags && npm publish"
+  },
+  "repository": "eight04/ffscale",
+  "author": "eight04 <eight04@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "c8": "^9.1.0",
+    "eslint": "^8.57.0"
+  },
+  "dependencies": {
+    "execa": "^8.0.1",
+    "fast-glob": "^3.3.2",
+    "neodoc": "^2.0.2",
+    "python-format-js": "^1.4.3"
+  },
+  "bin": "./index.mjs"
+}
