@@ -9,6 +9,8 @@ import {$} from "execa";
 import format from "python-format-js";
 
 const docs = `
+A CLI wrapping ffmpeg to upscale/downscale videos.
+
 usage: ffscale [--version] [--help] 
                [--width <length>] [--height <length>]
                [--short-side <length>] [--long-side <length>]
@@ -56,7 +58,7 @@ for (const pattern of args["<file>"]) {
       throw new Error(`ffprobe error: ${data.error.string}`);
     }
 
-    const video = data.streams.find(s => s.width && s.duration);
+    const video = data.streams.find(s => s.width && s.bit_rate);
     if (!video) {
       console.log("Skipping non-video file.")
       continue;
@@ -110,11 +112,11 @@ for (const pattern of args["<file>"]) {
       name: path.basename(file, path.extname(file)),
       ext: path.extname(file),
     });
-    if (!args["--overwrite"] && await fs.access(output).catch(() => null)) {
+    if (!args["--overwrite"] && await fs.stat(output).catch(() => false)) {
       console.log("Skipping existing file.");
       continue;
     }
-    await $({stdio: "inherit", verbose: true})`ffmpeg -i ${file} -vf scale=${targetWidth}:${targetHeight} -c:a copy -y ${output}`;
+    await $({stdio: "inherit", verbose: true})`ffmpeg -i ${file} -vf scale=${targetWidth}:${targetHeight} -c:a copy -y -hide_banner ${output}`;
   }
 }
 
