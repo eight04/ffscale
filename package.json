@@ -1,6 +1,6 @@
 {
   "name": "ffscale",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "A CLI wrapping ffmpeg to upscale/downscale videos. ",
   "keywords": [
     "cli",
