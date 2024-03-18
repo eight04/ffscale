@@ -60,6 +60,12 @@ https://github.com/eight04/ffscale/blob/master/index.mjs#L12
 Changelog
 ---------
 
+* 0.1.1 (Mar 18, 2024)
+
+  - Fix: avoid odd dimensions.
+  - Fix: overwrite empty files.
+  - Fix: improve performance.
+
 * 0.1.0 (Mar 4, 2024)
 
   - Initial release.
