@@ -89,6 +89,12 @@ for (const pattern of args["<file>"]) {
       targetHeight = Math.round(targetWidth * video.height / video.width);
     }
 
+    if (video.codec_name === "h264") {
+      // some codec don't like odd dimensions
+      targetWidth = targetWidth - targetWidth % 2;
+      targetHeight = targetHeight - targetHeight % 2;
+    }
+
     if (args["--direction"] === "down") {
       if (targetWidth >= video.width || targetHeight >= video.height) {
         console.log("Skipping upscaling.")
@@ -106,10 +112,15 @@ for (const pattern of args["<file>"]) {
       name: path.basename(file, path.extname(file)),
       ext: path.extname(file),
     });
-    if (!args["--overwrite"] && await fs.stat(output).catch(() => false)) {
-      console.log("Skipping existing file.");
-      continue;
+
+    if (!args["--overwrite"]) {
+      const stat = await fs.stat(output).catch(() => false);
+      if (stat && stat.size) {
+        console.log("Skipping existing file.");
+        continue;
+      }
     }
+
     await $({stdio: "inherit", verbose: true})`ffmpeg -i ${file} -vf scale=${targetWidth}:${targetHeight} -c:a copy -y -hide_banner ${output}`;
   }
 }
