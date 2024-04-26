@@ -11,7 +11,7 @@ import format from "python-format-js";
 const docs = `
 A CLI wrapping ffmpeg to upscale/downscale videos.
 
-usage: ffscale [--version] [--help] 
+usage: ffscale [--version] [--help] [--verbose]
                [--width <length>] [--height <length>]
                [--short-side <length>] [--long-side <length>]
                [--output <string_fmt>] [--overwrite]
@@ -19,6 +19,7 @@ usage: ffscale [--version] [--help]
                <file>...
 
 options:
+  -v, --verbose              Show detail information.
   -w, --width <length>       Scale by width.
   -h, --height <length>      Scale by height.
   -s, --short-side <length>  Scale by the short side.
@@ -42,8 +43,11 @@ for (const pattern of args["<file>"]) {
   for await (const file of fg.stream(pattern, {onlyFiles: true})) {
     console.log(`Processing ${file}`);
 
-    const raw = await $`ffprobe ${file} -of json -show_streams -show_error`.catch(err => err);
+    const raw = await $({verbose: args["--verbose"]})`ffprobe ${file} -of json -show_streams -show_error`.catch(err => err);
     const data = JSON.parse(raw.stdout);
+    if (args["--verbose"]) {
+      console.log(data);
+    }
     if (data.error) {
       if (/invalid data/i.test(data.error.string)) {
         console.log("Skipping non-video file.")
@@ -52,7 +56,7 @@ for (const pattern of args["<file>"]) {
       throw new Error(`ffprobe error: ${data.error.string}`);
     }
 
-    const video = data.streams.find(s => s.width && s.bit_rate);
+    const video = data.streams.find(s => s.width && s.codec_type === "video");
     if (!video) {
       console.log("Skipping non-video file.")
       continue;
