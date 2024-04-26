@@ -60,6 +60,10 @@ https://github.com/eight04/ffscale/blob/master/index.mjs#L12
 Changelog
 ---------
 
+* 0.1.2 (Mar 29, 2024)
+
+  - Fix: detect videos by `codec_type` instead of `bit_rate`.
+
 * 0.1.1 (Mar 18, 2024)
 
   - Fix: avoid odd dimensions.
