@@ -60,6 +60,10 @@ https://github.com/eight04/ffscale/blob/master/index.mjs#L12
 Changelog
 ---------
 
+* 0.2.0 (May 1, 2024)
+
+  - Change: now you can specify zero length to remove the video track.
+
 * 0.1.2 (Mar 29, 2024)
 
   - Fix: detect videos by `codec_type` instead of `bit_rate`.
