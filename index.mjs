@@ -35,6 +35,8 @@ options:
 
 <length> can be an integer (in px), or a percentage.
 
+<length> can be zero. In this case, the video track will be removed completely.
+
 The CLI tries to maintain the aspect ratio if only one side is specified.
 `;
 
@@ -83,39 +85,43 @@ for (const pattern of args["<file>"]) {
         targetHeight = calc(video.height, args["--long-side"]);
       }
     }
-    if (!targetWidth && !targetHeight) {
-      throw new Error("No target size specified.");
-    }
-    if (!targetWidth) {
-      targetWidth = Math.round(targetHeight * video.width / video.height);
-    }
-    if (!targetHeight) {
-      targetHeight = Math.round(targetWidth * video.height / video.width);
-    }
+    if (targetWidth || targetHeight) {
+      if (!targetWidth) {
+        targetWidth = Math.round(targetHeight * video.width / video.height);
+      }
+      if (!targetHeight) {
+        targetHeight = Math.round(targetWidth * video.height / video.width);
+      }
 
-    if (video.codec_name === "h264") {
-      // some codec don't like odd dimensions
-      targetWidth = targetWidth - targetWidth % 2;
-      targetHeight = targetHeight - targetHeight % 2;
-    }
+      if (video.codec_name === "h264") {
+        // some codec don't like odd dimensions
+        targetWidth = targetWidth - targetWidth % 2;
+        targetHeight = targetHeight - targetHeight % 2;
+      }
 
-    if (args["--direction"] === "down") {
-      if (targetWidth >= video.width || targetHeight >= video.height) {
-        console.log("Skipping upscaling.")
-        continue;
+      if (args["--direction"] === "down") {
+        if (targetWidth >= video.width || targetHeight >= video.height) {
+          console.log("Skipping upscaling.")
+          continue;
+        }
+      }
+      if (args["--direction"] === "up") {
+        if (targetWidth <= video.width || targetHeight <= video.height) {
+          console.log("Skipping downscaling.")
+          continue;
+        }
       }
     }
-    if (args["--direction"] === "up") {
-      if (targetWidth <= video.width || targetHeight <= video.height) {
-        console.log("Skipping downscaling.")
-        continue;
-      }
-    }
-    const output = format(args["--output"], {
+
+    const fileContext = {
       dir: path.dirname(file) + "/",
       name: path.basename(file, path.extname(file)),
       ext: path.extname(file),
-    });
+    };
+
+    // TODO: add an audio_codec->ext map?
+
+    const output = format(args["--output"], fileContext);
 
     if (!args["--overwrite"]) {
       const stat = await fs.stat(output).catch(() => false);
@@ -125,7 +131,8 @@ for (const pattern of args["<file>"]) {
       }
     }
 
-    await $({stdio: "inherit", verbose: true})`ffmpeg -i ${file} -vf scale=${targetWidth}:${targetHeight} -c:a copy -y -hide_banner ${output}`;
+    const videoArgs = targetWidth && targetHeight ? ["-vf", `scale=${targetWidth}:${targetHeight}`] : "-vn";
+    await $({stdio: "inherit", verbose: true})`ffmpeg -i ${file} ${videoArgs} -c:a copy -y -hide_banner ${output}`;
   }
 }
 
