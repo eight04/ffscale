@@ -60,6 +60,10 @@ https://github.com/eight04/ffscale/blob/master/index.mjs#L12
 Changelog
 ---------
 
+* 0.3.0 (May 3, 2024)
+
+  - Change: skip .gif and .jpg files.
+
 * 0.2.0 (May 1, 2024)
 
   - Change: now you can specify zero length to remove the video track.
