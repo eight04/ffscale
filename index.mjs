@@ -40,10 +40,24 @@ options:
 The CLI tries to maintain the aspect ratio if only one side is specified.
 `;
 
+// The output quality is so bad for these files
+const INVALID_EXTENSION = [".gif", ".jpg"];
+
 const args = neodoc.run(docs);
 for (const pattern of args["<file>"]) {
   for await (const file of fg.stream(pattern, {onlyFiles: true})) {
     console.log(`Processing ${file}`);
+
+    const fileContext = {
+      dir: path.dirname(file) + "/",
+      name: path.basename(file, path.extname(file)),
+      ext: path.extname(file),
+    };
+
+    if (INVALID_EXTENSION.includes(fileContext.ext)) {
+      console.log("Skipping unsupported extension.")
+      continue;
+    }
 
     const raw = await $({verbose: args["--verbose"]})`ffprobe ${file} -of json -show_streams -show_error`.catch(err => err);
     const data = JSON.parse(raw.stdout);
@@ -112,12 +126,6 @@ for (const pattern of args["<file>"]) {
         }
       }
     }
-
-    const fileContext = {
-      dir: path.dirname(file) + "/",
-      name: path.basename(file, path.extname(file)),
-      ext: path.extname(file),
-    };
 
     // TODO: add an audio_codec->ext map?
 
