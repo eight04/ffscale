@@ -7,7 +7,6 @@ export default [
     "rules": {
       "dot-notation": 2,
       "max-statements-per-line": 2,
-      "quotes": [2, "double", "avoid-escape"],
     },
     languageOptions: {
       globals: globals.node

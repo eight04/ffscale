@@ -7,6 +7,7 @@ import neodoc from "neodoc";
 import fg from "fast-glob";
 import {$} from "execa";
 import format from "python-format-js";
+import trash from 'trash';
 
 const docs = `
 A CLI wrapping ffmpeg to upscale/downscale videos.
@@ -16,6 +17,7 @@ usage: ffscale [--version] [--help] [--verbose]
                [--short-side <length>] [--long-side <length>]
                [--output <string_fmt>] [--overwrite]
                [--direction <direction>]
+               [--delete]
                <file>...
 
 options:
@@ -31,6 +33,7 @@ options:
 
   --overwrite                Overwrite the destination file.
   --direction <direction>    Could be "down", "up", or "both". [default: "down"]
+  --delete                   Send the original file to trash.
   <file>                     Glob pattern. Files to convert.
 
 <length> can be an integer (in px), or a percentage.
@@ -147,6 +150,9 @@ for (const pattern of args["<file>"]) {
 
     const videoArgs = targetWidth && targetHeight ? ["-vf", `scale=${targetWidth}:${targetHeight}`] : "-vn";
     await $({stdio: "inherit", verbose: true})`ffmpeg -i ${file} ${videoArgs} -c:a copy -y -hide_banner ${output}`;
+    if (args["--delete"]) {
+      await trash(file, {glob: false});
+    }
   }
 }
 
