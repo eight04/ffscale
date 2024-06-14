@@ -69,6 +69,12 @@ for (const pattern of args["<file>"]) {
         console.log("Skipping non-video file.")
         continue;
       }
+      // FIXME: ffprobe throws invalid argument when it sees a zip file?
+      // usually it throws invalid data. This is probably a bug.
+      if (/invalid argument/i.test(data.error.string)) {
+        console.log(`Unknown error: ${data.error.string}`)
+        continue;
+      }
       throw new Error(`ffprobe error: ${data.error.string}`);
     }
 
