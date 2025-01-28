@@ -60,6 +60,11 @@ https://github.com/eight04/ffscale/blob/master/index.mjs#L12
 Changelog
 ---------
 
+* 0.3.1 (Jan 28, 2025)
+
+  - Fix: handle error with zip files.
+  - Add: `--delete` option.
+
 * 0.3.0 (May 3, 2024)
 
   - Change: skip .gif and .jpg files.
